@@ -41,19 +41,38 @@ def write_midi_file(file_name):
 
 def generate_chord():
 	chord = []
+	# TODO: Give list of midi numbers instead of strings for the pitches
 
 	note_index = randint(0, 6)
 
 	# Root Note:
-	chord[0] = scales[global_key][note_index]
+	chord.append(scales[global_key][note_index])
 
 	# Currently only generates 2 other notes for the chord
-	chord[1] = chord[(note_index+2)%6]
-	chord[2] = chord[(note_index+4)%6]
+	chord.append(scales[global_key][(note_index+2)%6])
+	chord.append(scales[global_key][(note_index+4)%6])
 
 	return chord
+
+def generate_chord_progression():
+	chord_progression = []
+
+	# Randomly pick a 2 -> 4 chord progression
+	num_chords = randint(2, 4)
+
+	for i in xrange(num_chords):
+		chord_progression.append(generate_chord())
+
+	for i in xrange(num_chords):
+		for j in xrange(len(chord_progression)):
+			pass
+
+	return chord_progression
+
+
 
 def generate_midi():
 	pass
 
+print generate_chord_progression()
 write_midi_file("sample")
