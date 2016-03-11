@@ -45,13 +45,19 @@ def generate_chord():
 
 	note_index = randint(0, 6)
 
+	# Number of notes in the chord
+	# TODO: Will need to figure out what would be best
+	num_notes = randint(3, 5)
+
 	# TODO: Generate chords with variable octaves
 	# Root Note:
 	chord.append(get_octave(scales[global_key][note_index], randint(4, 5)))
 
 	# Currently only generates 2 other notes for the chord
-	chord.append(get_octave(scales[global_key][(note_index+2)%6], randint(4, 5)))
-	chord.append(get_octave(scales[global_key][(note_index+4)%6], randint(4, 5)))
+	chord.append(get_octave(scales[global_key][(note_index+2)%7], randint(4, 5)))
+	chord.append(get_octave(scales[global_key][(note_index+4)%7], randint(4, 5)))
+
+	print "CHORD: ", scales[global_key][note_index], " ", scales[global_key][(note_index+2)%7], " ", scales[global_key][(note_index+4)%7]
 
 	return chord
 
@@ -82,7 +88,6 @@ def generate_chord_progression():
 			for note in chord:
 				MyMIDI.addNote(track, channel, note, time, 1, 100)
 			time += 1
-
 	elif (num_chords == 4):
 		for chord in chord_progression:
 			for note in chord:
