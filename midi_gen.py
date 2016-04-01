@@ -3,17 +3,56 @@ from random import randint
 
 MyMIDI = MIDIFile(1)
 
-notes = {\
-'C' : 0, 'C#' : 1, \
-'D' : 2, 'D#' : 3, \
-'E' : 4, \
-'F' : 5, 'F#' : 6, \
-'G' : 7, 'G#' : 8, \
-'A' : 9, 'A#' : 10, 
-'B' : 11 }
+# Every possible note
+notes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
+
+# s -> sharp
+(C,Cs,D,Ds,E,F,Fs,G,Gs,A,As,B) = 0,1,2,3,4,5,6,7,8,9,10,11
 
 scales = {\
-'Cmaj' : ['C', 'D', 'E', 'F', 'G', 'A', 'B']\
+	'Cmaj' : [C, D, E, F, G, A, B]
+}
+
+(I,ii,iii,IV,V,vi,viio) = 0,1,2,3,4,5,6
+
+global_chords_in_scale = {\
+'Cmaj' : [['Cmaj', 'Cmaj7'], ['Dmin', 'Dmin7'], ['Emin', 'Emin7'],\
+		  ['Fmaj', 'Fmaj7'], ['Gmaj', 'Gdom7'], ['Amin', 'Amin7'],\
+		  ['Bdim', 'Bmin7b5']]
+}
+
+global_chords = {\
+	'Amaj'    : [],\
+	'Amaj7'   : [],\
+	'Amin'    : [A, C, E],\
+	'Amin7'   : [A, C, E, G],\
+	'Bmaj'    : [],\
+	'Bmaj7'   : [],\
+	'Bmin'    : [],\
+	'Bmin7'   : [],\
+	'Bdim'    : [B, D, F],\
+	'Bmin7b5' : [B, D, F, A],\
+	'Cmaj'    : [C, E, G],\
+	'Cmaj7'   : [C, E, G, B],\
+	'Cmin'    : [],\
+	'Cmin7'   : [],\
+	'Dmaj'    : [],\
+	'Dmaj7'   : [],\
+	'Dmin'    : [D, F, A],\
+	'Dmin7'   : [D, F, A, C],\
+	'Emaj'    : [],\
+	'Emaj7'   : [],\
+	'Emin'    : [E, G, B],\
+	'Emin7'   : [E, G, B, D],\
+	'Fmaj'    : [F, A, C],\
+	'Fmaj7'   : [F, A, C, E],\
+	'Fmin'    : [],\
+	'Fmin7'   : [],\
+	'Gmaj'    : [G, B, D],\
+	'Gmaj7'   : [G, B, D, F],\
+	'Gmin'    : [],\
+	'Gmin7'   : [],\
+	'Gdom7'   : [G, B, D, F]
 }
 
 # TODO: Need this to be able to be set by the user
@@ -22,10 +61,9 @@ global_key = 'Cmaj'
 # returns the numerical value for the octave of note
 # TODO: Some programs treat the midi notes slightly differently
 def get_octave(note, octave):
-	return notes[note] + (octave * 12)
+	return note + (octave * 12)
 
-track = 0
-time = 0
+(track, time, channel, volume) = 0, 0, 0, 100
 
 # TODO: change these to be something user defined(?)
 MyMIDI.addTrackName(track, time, "Midi Track")
@@ -39,62 +77,36 @@ def write_midi_file(file_name):
 	MyMIDI.writeFile(binfile)
 	binfile.close()
 
-def generate_chord():
-	chord = []
-	# TODO: Give list of midi numbers instead of strings for the pitches
-
-	note_index = randint(0, 6)
-
-	# Number of notes in the chord
-	# TODO: Will need to figure out what would be best
-	num_notes = randint(3, 5)
-
-	# TODO: Generate chords with variable octaves
-	# Root Note:
-	chord.append(get_octave(scales[global_key][note_index], randint(4, 5)))
-
-	# Currently only generates 2 other notes for the chord
-	chord.append(get_octave(scales[global_key][(note_index+2)%7], randint(4, 5)))
-	chord.append(get_octave(scales[global_key][(note_index+4)%7], randint(4, 5)))
-
-	print "CHORD: ", scales[global_key][note_index], " ", scales[global_key][(note_index+2)%7], " ", scales[global_key][(note_index+4)%7]
-
-	return chord
-
 def generate_chord_progression():
-	chord_progression = []
+	chords = []
 
-	# Randomly pick a 2 -> 4 chord progression
+	# Number of chords 
 	num_chords = randint(2, 4)
 
-	# Add chords to the chord progression (2 -> 4 chords)
-	# TODO: Make it so that two of the same/similar chords can't follow right after the other
+	# This should be moved over to a markov chain
 	for i in xrange(num_chords):
-		chord_progression.append(generate_chord())
+		chords.append(randint(I, viio))
 
-	track = 0
-	channel = 0
-	time = 0
+	chord_progression = []
 
-	# TODO: Need a simpler function to generate chords no matter the number of chords (if possible)
-
-	if (num_chords == 2):
-		for chord in chord_progression:
-			for note in chord:
-				MyMIDI.addNote(track, channel, note, time, 2, 100)
-			time += 2
-	elif (num_chords == 3):
-		for chord in chord_progression:
-			for note in chord:
-				MyMIDI.addNote(track, channel, note, time, 1, 100)
-			time += 1
-	elif (num_chords == 4):
-		for chord in chord_progression:
-			for note in chord:
-				MyMIDI.addNote(track, channel, note, time, 1, 100)
-			time += 1
+	for chord in chords:
+		append_chord = global_chords_in_scale[global_key][chord][randint(0,1)]
+		chord_progression.append(global_chords[append_chord])
 
 	return chord_progression
 
-print generate_chord_progression()
-write_midi_file("sample")
+def write_chord_progression():
+	chords = generate_chord_progression()
+
+	duration = 4 / len(chords)
+	time = 0
+
+	for chord in chords:
+		print chord
+		for note in chord:
+			MyMIDI.addNote(track, channel, get_octave(note, randint(4,5)), time, duration, volume)
+		time += duration
+
+	write_midi_file("sample")
+
+write_chord_progression()
