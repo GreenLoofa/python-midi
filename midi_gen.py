@@ -6,9 +6,11 @@ MyMIDI = MIDIFile(1)
 # Every possible note
 notes = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
 
+
 # s -> sharp
 (C,Cs,D,Ds,E,F,Fs,G,Gs,A,As,B) = 0,1,2,3,4,5,6,7,8,9,10,11
 
+# TODO: Use this for random melodies in the future
 scales = {\
 	'Cmaj' : [C, D, E, F, G, A, B]
 }
