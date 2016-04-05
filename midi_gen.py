@@ -104,9 +104,10 @@ def write_chord_progression():
 	time = 0
 
 	for chord in chords:
-		print chord
 		for note in chord:
 			MyMIDI.addNote(track, channel, get_octave(note, randint(4,5)), time, duration, volume)
+			print notes[note] ,
+		print
 		time += duration
 
 	write_midi_file("sample")
