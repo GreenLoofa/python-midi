@@ -1,5 +1,6 @@
 from midiutil.MidiFile import MIDIFile
 from random import randint
+from markov import get_sequence
 
 MyMIDI = MIDIFile(1)
 
@@ -80,15 +81,14 @@ def write_midi_file(file_name):
 	binfile.close()
 
 def generate_chord_progression():
-	chords = []
+	chords = get_sequence()
 
 	# Number of chords 
-	num_chords = randint(2, 4)
+	# num_chords = randint(2, 4)
 
 	# This should be moved over to a markov chain
-	for i in xrange(num_chords):
-		chords.append(randint(I, viio))
-
+	# for i in xrange(num_chords):
+	# 	chords.append(randint(I, viio))
 	chord_progression = []
 
 	for chord in chords:
